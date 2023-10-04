@@ -1,10 +1,14 @@
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.neighbors import KNeighborsClassifier
+
 
 # Load the data
 data = pd.read_csv('data/heart_2020_cleaned.csv')
 
 
-# Transform the boolean columns into 0,1
+# Transform the data
 data['HeartDisease'] = data['HeartDisease'].replace({'Yes': 1, 'No': 0})
 
 data['Smoking'] = data['Smoking'].replace({'Yes': 1, 'No': 0})
@@ -60,5 +64,22 @@ data['KidneyDisease'] = data['KidneyDisease'].replace({'Yes': 1, 'No': 0})
 
 data['SkinCancer'] = data['SkinCancer'].replace({'Yes': 1, 'No': 0})
 
-print(data.info())
+
+#Separate between objective variable and independent variables
+char = data.drop(columns=['HeartDisease'])
+obj = data['HeartDisease']
+
+
+#Divide the data between train and test data
+char_train, char_test, obj_train, obj_test = train_test_split(char, obj, test_size=0.2, random_state=42)
+
+
+#Normalize variables
+columns_to_normalize = data.select_dtypes(include=['float64']).columns
+scaler = MinMaxScaler()
+data[columns_to_normalize] = scaler.fit_transform(data[columns_to_normalize])
+
+
+
+#print(data.info())
 print(data.head())
